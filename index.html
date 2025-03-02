@@ -224,27 +224,59 @@
     }
     
     // Switch to Cytonic Chain
-    async function switchToCytonicChain() {
+async function switchToCytonicChain() {
+  try {
+    showStatus("Switching to Cytonic Chain...");
+
+    // Try switching first
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: cytonicChain.chainId }],
+    });
+
+    showStatus("Successfully switched to Cytonic Chain!");
+    switchNetworkButton.style.display = "none";
+    initializeAfterNetworkSwitch();
+    
+  } catch (error) {
+    // If chain is not recognized, add it first
+    if (error.code === 4902) {
+      showStatus("Adding Cytonic Chain to MetaMask...");
       try {
-        showStatus("Switching to Cytonic Chain...");
-        
-        // Try to switch to the Cytonic Chain
-        try {
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: cytonicChain.chainId }],
-          });
-        } catch (switchError) {
-          // If the chain is not added to MetaMask, add it
-          if (switchError.code === 4902) {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [cytonicChain],
-            });
-          } else {
-            throw switchError;
-          }
-        }
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: cytonicChain.chainId,
+            chainName: cytonicChain.chainName,
+            nativeCurrency: cytonicChain.nativeCurrency,
+            rpcUrls: cytonicChain.rpcUrls,
+            blockExplorerUrls: cytonicChain.blockExplorerUrls
+          }]
+        });
+
+        // Retry switching after adding
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: cytonicChain.chainId }],
+        });
+
+        showStatus("Cytonic Chain added and switched successfully!");
+        switchNetworkButton.style.display = "none";
+        initializeAfterNetworkSwitch();
+
+      } catch (addError) {
+        console.error("Error adding network:", addError);
+        showStatus("Failed to add Cytonic Chain: " + addError.message);
+      }
+    } else {
+      console.error("Error switching network:", error);
+      showStatus("Failed to switch network: " + error.message);
+    }
+  }
+}
+
+
+    
         
         // Check if we're now on Cytonic Chain
         const isCytonicChain = await checkNetwork();
