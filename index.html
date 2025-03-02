@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexus GM</title>
+  <title>Cytonic GM</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -130,19 +130,19 @@
 </head>
 <body>
   <div class="container">
-    <div class="title">Nexus GM</div>
+    <div class="title">Cytonic GM</div>
     <div id="counter" class="counter">0</div>
     
 
     
     <div class="chain-info">
-      <div><strong>Network:</strong> Nexus Chain (Chain ID: 393)</div>
-      <div><strong>Currency:</strong> NEX</div>
-      <div><strong>RPC URL:</strong> https://rpc.nexus.xyz/http</div>
+      <div><strong>Network:</strong> Cytonic Chain (Chain ID: 52226)</div>
+      <div><strong>Currency:</strong> CCC</div>
+      <div><strong>RPC URL:</strong> https://rpc.evm.testnet.cytonic.com</div>
     </div>
     
     <button id="connect-wallet" class="button">Connect Wallet</button>
-    <button id="switch-network" class="button" style="display: none;">Switch to Nexus Chain</button>
+    <button id="switch-network" class="button" style="display: none;">Switch to Cytonic Chain</button>
     <button id="send-gm" class="button" disabled>Send GM</button>
     
     <div id="wallet-info" class="wallet-info" style="display: none;">
@@ -180,19 +180,19 @@
     let isWalletConnected = false; // Track if wallet is already connected
     
     // Fixed contract address (hardcoded)
-    const contractAddress = '0xd53cA207D16805dbeaAFbAFd69d5eD4Ffabb1A05';  // Updated contract address
+    const contractAddress = '0x91afBB53D64621EBa270f1B2c363B2f11dE48ee8';  // Updated contract address
     
-    // Nexus Chain configuration
-    const nexusChain = {
-      chainId: '0x189', // 393 in hex
-      chainName: 'Nexus Chain',
+    // Cytonic Chain configuration
+    const cytonicChain = {
+      chainId: '0xCC12', // 393 in hex
+      chainName: 'Cytonic Ethereum Testnet',
       nativeCurrency: {
-        name: 'Nexus Token',
-        symbol: 'NEX',
+        name: 'Cytonic Ethereum',
+        symbol: 'CCC',
         decimals: 18
       },
-      rpcUrls: ['https://rpc.nexus.xyz/http'],
-      blockExplorerUrls: ['https://explorer.nexus.xyz']
+      rpcUrls: ['https://rpc.evm.testnet.cytonic.com'],
+      blockExplorerUrls: ['https://explorer.evm.testnet.cytonic.com']
     };
     
     // GM Contract ABI
@@ -212,48 +212,48 @@
       statusMessageDiv.textContent = message;
     }
     
-    // Check if the current network is Nexus Chain
+    // Check if the current network is Cytonic Chain
     async function checkNetwork() {
       try {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        return chainId === nexusChain.chainId;
+        return chainId === cytonicChain.chainId;
       } catch (error) {
         console.error("Error checking network:", error);
         return false;
       }
     }
     
-    // Switch to Nexus Chain
-    async function switchToNexusChain() {
+    // Switch to Cytonic Chain
+    async function switchToCytonicChain() {
       try {
-        showStatus("Switching to Nexus Chain...");
+        showStatus("Switching to Cytonic Chain...");
         
-        // Try to switch to the Nexus Chain
+        // Try to switch to the Cytonic Chain
         try {
           await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: nexusChain.chainId }],
+            params: [{ chainId: cytonicChain.chainId }],
           });
         } catch (switchError) {
           // If the chain is not added to MetaMask, add it
           if (switchError.code === 4902) {
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
-              params: [nexusChain],
+              params: [cytonicChain],
             });
           } else {
             throw switchError;
           }
         }
         
-        // Check if we're now on Nexus Chain
-        const isNexusChain = await checkNetwork();
-        if (isNexusChain) {
-          showStatus("Successfully connected to Nexus Chain");
+        // Check if we're now on Cytonic Chain
+        const isCytonicChain = await checkNetwork();
+        if (isCytonicChain) {
+          showStatus("Successfully connected to Cytonic Chain");
           switchNetworkButton.style.display = "none";
           initializeAfterNetworkSwitch();
         } else {
-          showStatus("Failed to switch to Nexus Chain");
+          showStatus("Failed to switch to Cytonic Chain");
         }
       } catch (error) {
         console.error("Error switching network:", error);
@@ -320,15 +320,15 @@
         walletInfoDiv.style.display = "block";
         connectWalletButton.textContent = "Wallet Connected";
         
-        // Check if we're on Nexus Chain
-        const isNexusChain = await checkNetwork();
-        if (isNexusChain) {
-          networkInfoDiv.textContent = "Connected to Nexus Chain";
-          showStatus("Wallet connected to Nexus Chain.");
+        // Check if we're on Cytonic Chain
+        const isCytonicChain = await checkNetwork();
+        if (isCytonicChain) {
+          networkInfoDiv.textContent = "Connected to Cytonic Chain";
+          showStatus("Wallet connected to Cytonic Chain.");
           initializeAfterNetworkSwitch();
         } else {
-          networkInfoDiv.textContent = "Not connected to Nexus Chain";
-          showStatus("Please switch to Nexus Chain");
+          networkInfoDiv.textContent = "Not connected to Cytonic Chain";
+          showStatus("Please switch to Cytonic Chain");
           switchNetworkButton.style.display = "block";
         }
         
@@ -420,10 +420,10 @@
     // Send GM
     async function sendGm() {
       try {
-        // Check if we're on Nexus Chain
-        const isNexusChain = await checkNetwork();
-        if (!isNexusChain) {
-          showStatus("Please switch to Nexus Chain first");
+        // Check if we're on Cytonic Chain
+        const isCytonicChain = await checkNetwork();
+        if (!isCytonicChain) {
+          showStatus("Please switch to Cytonic Chain first");
           switchNetworkButton.style.display = "block";
           return;
         }
@@ -473,7 +473,7 @@
   
     // Event listeners for buttons
     connectWalletButton.addEventListener('click', connectWallet);
-    switchNetworkButton.addEventListener('click', switchToNexusChain);
+    switchNetworkButton.addEventListener('click', switchToCytonicChain);
     sendGmButton.addEventListener('click', sendGm);
   
     // Reload page if chain changes (reinitialize the state)
