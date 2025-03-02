@@ -184,10 +184,10 @@
     
     // Cytonic Chain configuration
     const cytonicChain = {
-      chainId: '0xCC02', // 52226 in hex
+      chainId: '0xcc02', // 52226 in hex
       chainName: 'Cytonic Ethereum Testnet',
       nativeCurrency: {
-        name: 'Cytonic Ethereum Testnet',
+        name: 'Cytonic Ethereum',
         symbol: 'CCC',
         decimals: 18
       },
@@ -216,7 +216,10 @@
     async function checkNetwork() {
       try {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        console.log(chainId);
         return chainId === cytonicChain.chainId;
+        
+        
       } catch (error) {
         console.error("Error checking network:", error);
         return false;
@@ -247,7 +250,7 @@
         }
         
         // Check if we're now on Cytonic Chain
-        const isCytonicChain = 1;
+        const isCytonicChain = await checkNetwork();
         if (isCytonicChain) {
           showStatus("Successfully connected to Cytonic Chain");
           switchNetworkButton.style.display = "none";
@@ -321,7 +324,7 @@
         connectWalletButton.textContent = "Wallet Connected";
         
         // Check if we're on Cytonic Chain
-        const isCytonicChain = 1;
+        const isCytonicChain = await checkNetwork();
         if (isCytonicChain) {
           networkInfoDiv.textContent = "Connected to Cytonic Chain";
           showStatus("Wallet connected to Cytonic Chain.");
@@ -421,7 +424,7 @@
     async function sendGm() {
       try {
         // Check if we're on Cytonic Chain
-        const isCytonicChain =1;
+        const isCytonicChain = await checkNetwork();
         if (!isCytonicChain) {
           showStatus("Please switch to Cytonic Chain first");
           switchNetworkButton.style.display = "block";
