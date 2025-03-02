@@ -224,42 +224,51 @@
     }
     
     // Switch to Cytonic Chain
+
     async function switchToCytonicChain() {
-      try {
+    try {
         showStatus("Switching to Cytonic Chain...");
-        
-        // Try to switch to the Cytonic Chain
-        try {
-          await window.ethereum.request({
+
+        await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: cytonicChain.chainId }],
-          });
-        } catch (switchError) {
-          // If the chain is not added to MetaMask, add it
-          if (switchError.code === 4902) {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [cytonicChain],
-            });
-          } else {
-            throw switchError;
-          }
-        }
-        
-        // Check if we're now on Cytonic Chain
-        const isCytonicChain = await checkNetwork();
-        if (isCytonicChain) {
-          showStatus("Successfully connected to Cytonic Chain");
-          switchNetworkButton.style.display = "none";
-          initializeAfterNetworkSwitch();
+            params: [{ chainId: '0xCC02' }], // Ensure the hex chain ID is correct
+        });
+
+        showStatus("Switched to Cytonic Chain!");
+        switchNetworkButton.style.display = "none";
+        initializeAfterNetworkSwitch();
+
+    } catch (error) {
+        if (error.code === 4902) {
+            try {
+                showStatus("Cytonic Chain not found. Adding network...");
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [cytonicChain],
+                });
+
+                showStatus("Cytonic Chain added! Switching...");
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0xCC02' }],
+                });
+
+                showStatus("Switched to Cytonic Chain!");
+                switchNetworkButton.style.display = "none";
+                initializeAfterNetworkSwitch();
+
+            } catch (addError) {
+                console.error("Error adding Cytonic Chain:", addError);
+                showStatus("Failed to add Cytonic Chain: " + addError.message);
+            }
         } else {
-          showStatus("Failed to switch to Cytonic Chain");
+            console.error("Error switching to Cytonic Chain:", error);
+            showStatus("Failed to switch network: " + error.message);
         }
-      } catch (error) {
-        console.error("Error switching network:", error);
-        showStatus("Failed to switch network: " + error.message);
-      }
     }
+}
+        
+   
     
     // Initialize after network switch
     async function initializeAfterNetworkSwitch() {
