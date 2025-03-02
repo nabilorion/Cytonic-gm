@@ -38,6 +38,19 @@
     }
     
     .button {
+      background-color: orange;
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      padding: 10px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      margin: 10px 0;
+      min-width: 200px;
+    }
+    
+    .button1 {
       background-color: black;
       color: white;
       border: none;
@@ -54,7 +67,7 @@
       opacity: 0.9;
     }
     
-    .button:disabled .button-gm {
+    .button:disabled {
       background-color: #555;
       cursor: not-allowed;
     }
@@ -144,7 +157,7 @@
     
     <button id="connect-wallet" class="button">Connect Wallet</button>
     <button id="switch-network" class="button" style="display: none;">Switch to Cytonic Chain</button>
-    <button id="send-gm" class="button button-gm" disabled>Send GM</button>
+    <button id="send-gm" class="button1" disabled>Send GM</button>
     
     <div id="wallet-info" class="wallet-info" style="display: none;">
       <div>Connected Address: <span id="wallet-address">Not connected</span></div>
